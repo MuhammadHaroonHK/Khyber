@@ -175,7 +175,7 @@ const HomePage = () => {
               className="flex flex-wrap items-center justify-center gap-4 pt-2 w-full"
             >
               <a
-                href="https://forms.gle/FNsJPoMdTtEwTp2MA"
+                href="https://forms.gle/WzdSaumBGdREZofr5"
                 target="_blank"
                 rel="noreferrer"
               >

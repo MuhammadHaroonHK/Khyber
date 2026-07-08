@@ -133,7 +133,7 @@ const Navbar = () => {
             {/* CTA Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
               <a
-                href="https://forms.gle/KXg7MzBveJvhj83e7"
+                href="https://forms.gle/WzdSaumBGdREZofr5"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden lg:inline-block bg-[#0068A8] text-white border border-[#E4E454] rounded-md px-4 py-2 font-semibold text-sm shadow-md transition-all"
