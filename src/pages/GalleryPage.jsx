@@ -10,10 +10,10 @@ import {
 
 // ─── Gallery Images Data ──────────────────────────────────────────
 const galleryImages = [
-  { id: 1, title: 'Annual Sports Day', category: 'Events', image: '/Gallery/Fsc_Result_2025.webp', description: 'Students participating in various sports activities' },
-  { id: 2, title: 'Science Exhibition', category: 'Academics', image: '/Gallery/Matric_Result_2020.webp', description: 'Innovative science projects by our talented students' },
-  { id: 3, title: 'Graduation Ceremony', category: 'Events', image: '/Gallery/Matric_Result_2024.webp', description: 'Celebrating academic achievements of our graduates' },
-  { id: 4, title: 'Library Session', category: 'Academics', image: '/Gallery/1.webp', description: 'Students engaged in reading and research' },
+  { id: 1, title: 'Annual Sports Day', category: 'Events', image: '/Gallery/1.jpg', description: 'Students participating in various sports activities' },
+  { id: 2, title: 'Science Exhibition', category: 'Academics', image: '/Gallery/2.jpg', description: 'Innovative science projects by our talented students' },
+  { id: 3, title: 'Graduation Ceremony', category: 'Events', image: '/Gallery/3.jpg', description: 'Celebrating academic achievements of our graduates' },
+  { id: 4, title: 'Library Session', category: 'Academics', image: '/Gallery/4.jpg', description: 'Students engaged in reading and research' },
   { id: 5, title: 'Cultural Day', category: 'Events', image: '/Gallery/2.webp', description: 'Celebrating diversity through cultural performances' },
   { id: 6, title: 'Computer Lab', category: 'Facilities', image: '/Gallery/3.webp', description: 'Modern computer lab with latest technology' },
   { id: 7, title: 'Sports Ground', category: 'Facilities', image: '/Gallery/4.webp', description: 'Well-maintained sports facilities for students' },
