@@ -46,38 +46,6 @@ const AboutPage = () => {
     },
   ];
 
-  // Key features
-  const features = [
-    {
-      icon: GraduationCap,
-      title: "Quality Education",
-      description:
-        "Comprehensive curriculum aligned with modern educational standards.",
-      color: "#001830",
-    },
-    {
-      icon: Users,
-      title: "Expert Faculty",
-      description:
-        "Dedicated teachers with years of experience and advanced degrees.",
-      color: "#0068A8",
-    },
-    {
-      icon: Award,
-      title: "Academic Excellence",
-      description:
-        "Consistently high passing rates and outstanding student achievements.",
-      color: "#E4E454",
-    },
-    {
-      icon: School,
-      title: "Modern Facilities",
-      description:
-        "State-of-the-art labs, library, and sports facilities for holistic development.",
-      color: "#188454",
-    },
-  ];
-
   // Milestones
   const milestones = [
     {
@@ -230,64 +198,6 @@ const AboutPage = () => {
           </div>
         </motion.div>
 
-        {/* ─── Features Section ────────────────────────────────────── */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2,
-              },
-            },
-          }}
-          className="mb-16"
-        >
-          <motion.h3
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            className="text-2xl md:text-3xl font-bold text-[#001830] text-center mb-8"
-          >
-            Why Choose SMS?
-          </motion.h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                whileHover={{ scale: 1.03 }}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 text-center group"
-              >
-                <div
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-300 group-hover:scale-110"
-                  style={{ backgroundColor: `${feature.color}15` }}
-                >
-                  <feature.icon
-                    className="w-7 h-7 md:w-8 md:h-8"
-                    style={{ color: feature.color }}
-                  />
-                </div>
-                <h4 className="text-base md:text-lg font-bold text-[#001830] mb-2">
-                  {feature.title}
-                </h4>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ─── Milestones Timeline ────────────────────────────────── */}
         {/* ─── Milestones Timeline ────────────────────────────────── */}
         <motion.div
           initial="hidden"
