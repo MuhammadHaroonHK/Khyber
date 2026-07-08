@@ -223,7 +223,7 @@ const AboutPage = () => {
                 poster="https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1000&auto=format&fit=crop"
                 onLoadedData={() => setIsVideoLoaded(true)}
               >
-                <source src="/videos/sms_video.mp4" type="video/mp4" />
+                <source src="/videos/khyber_video.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
