@@ -91,7 +91,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <motion.img
-              src="/sms_logo.webp"
+              src="/khyber_logo.jfif"
               alt="SMS Logo"
               className="max-h-9 rounded-full"
             />

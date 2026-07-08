@@ -161,7 +161,7 @@ const HomePage = () => {
       >
         <div className="absolute inset-0 z-0">
           <img
-            src="/Background/background.webp"
+            src="/Background/background.jfif"
             // https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=1800
             alt="School Campus Background"
             className="w-full h-full object-cover object-center"
@@ -358,12 +358,12 @@ const HomePage = () => {
                   "THE BEST GUIDELINE FOR YOUR KIDS"
                 </p>
                 <p>
-                  Building a great institution takes time, dedication, and continuous effort. Every day, we work together to provide quality education, strong values, and a positive learning environment for our students.
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos tempore vero illum consectetur deleniti, ea velit non sed assumenda repellendus laudantium voluptatum recusandae doloremque odio natus pariatur provident minus possimus?
                 </p>
                 <p>
-                  At Khyber Model College & School, we encourage every student to learn with confidence, respect others, and develop the skills needed for a successful future. Our teachers and staff are committed to supporting each student throughout their educational journey.
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores cum veritatis dolorum, placeat, corrupti dolorem provident qui distinctio odit necessitatibus dicta molestiae magnam ea exercitationem cumque iure molestias nihil sequi?
                 </p>
-                <p> We believe that success comes through hard work, discipline, and determination. With the support of parents, teachers, and students, we will continue striving to make our institution a place of excellence and opportunity for everyone. 
+                <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam dolores inventore nobis, necessitatibus veritatis eum cumque, cum fugiat obcaecati totam, ipsam blanditiis explicabo magnam rerum non facilis enim voluptatibus impedit.
 
                 </p>
               </div>
@@ -371,10 +371,10 @@ const HomePage = () => {
               <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
                 <div>
                   <h4 className="text-xl font-bold text-gray-900">
-                    Israr Sikandar
+                    Principal Name
                   </h4>
                   <p className="text-sm text-gray-500 font-medium">
-                    Principal, Khyber Model Campus
+                    Principal, Khyber Model
                   </p>
                 </div>
                 <Link to="/about">
@@ -401,7 +401,7 @@ const HomePage = () => {
                 {/* Image Wrapper Container with responsive masks */}
                 <div className="relative z-10 overflow-hidden shadow-xl bg-gray-100 aspect-square lg:aspect-[4/5] rounded-full lg:rounded-2xl border-4 lg:border border-white lg:border-gray-200">
                   <img
-                    src="/Principal/sir_israr.webp"
+                    src="/Principal/principal.jfif"
                     alt="Principal's Portrait"
                     className="w-full h-full object-cover object-top"
                   />
