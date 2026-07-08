@@ -96,48 +96,6 @@ const features = [
       "Well-equipped classrooms, science labs, library, and sports facilities.",
     color: "#188454",
   },
-  {
-    icon: ShieldCheck,
-    title: "Discipline",
-    description:
-      "A disciplined and respectful environment that helps students stay focused.",
-    color: "#6366F1",
-  },
-  {
-    icon: Coins,
-    title: "Affordable Fee Structure",
-    description:
-      "Reasonable fees with flexible payment options for every family.",
-    color: "#0EA5E9",
-  },
-  {
-    icon: Briefcase,
-    title: "Professionalism",
-    description:
-      "Professional teachers and staff who work with honesty and responsibility.",
-    color: "#EC4899",
-  },
-  {
-    icon: Flame,
-    title: "Competitive Environment",
-    description:
-      "A positive environment that motivates students to compete and improve.",
-    color: "#F97316",
-  },
-  {
-    icon: Compass,
-    title: "Motivational and Career Counseling Seminars",
-    description:
-      "Regular seminars that inspire students and help them choose the right career path.",
-    color: "#8B5CF6",
-  },
-  {
-    icon: Trophy,
-    title: "Excellence Reserve for Those Who Aim High",
-    description:
-      "Special support and opportunities for students who strive for excellence.",
-    color: "#10B981",
-  },
 ];
 
 const HomePage = () => {
