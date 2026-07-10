@@ -1,11 +1,13 @@
+// src/pages/GalleryPage.jsx
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect, useMemo, useCallback, memo } from 'react';
 import { 
   X, 
-  ZoomIn, 
   ChevronLeft,
   ChevronRight,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 
 // ─── Gallery Images Data ──────────────────────────────────────────
@@ -27,49 +29,58 @@ const galleryImages = [
 
 const categories = ['All', 'Events', 'Academics', 'Facilities'];
 
-// ─── Pure CSS & GPU-Accelerated Gallery Card Sub-Component ────────
+// ─── GPU-Accelerated 3D Gallery Card Sub-Component ────────
 const GalleryCard = memo(({ image, index, onSelect }) => {
   const isEager = index < 4;
 
   return (
-    <div
+    <motion.div
       onClick={() => onSelect(index)}
-      className="group relative overflow-hidden rounded-xl cursor-pointer bg-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 will-change-transform"
+      initial={{ opacity: 0, y: 40, rotateX: 12, rotateY: -8 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0, rotateY: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: Math.min(index * 0.04, 0.2) }}
+      whileHover={{ 
+        y: -10, 
+        scale: 1.02,
+        rotateX: -4,
+        rotateY: 4,
+        z: 30,
+        transition: { duration: 0.3, ease: "easeOut" }
+      }}
+      style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+      className="group relative overflow-hidden rounded-2xl cursor-pointer bg-white p-2 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,24,48,0.12)] transition-shadow duration-300 will-change-transform"
     >
-      <div className="relative aspect-square overflow-hidden bg-gray-200">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100" style={{ transform: "translateZ(10px)" }}>
         <img
           src={image.image}
           alt={image.title}
-          width={500}
-          height={500}
           loading={isEager ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={isEager ? "high" : "low"}
-          className="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-500 ease-out will-change-transform"
+          className="w-full h-full object-cover transform scale-100 group-hover:scale-108 transition-transform duration-700 ease-out will-change-transform"
         />
         
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+        {/* Subtle Ambient Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-gray-950/20 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         
-        {/* Category Badge */}
-        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-[#001830] text-xs font-semibold px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 -translate-y-2 pointer-events-none">
+        {/* Floating Category Tag inside 3D space */}
+        <div 
+          style={{ transform: "translateZ(20px)" }}
+          className="absolute top-3 left-3 bg-[#001830]/80 backdrop-blur-md text-white text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-md border border-white/10"
+        >
           {image.category}
         </div>
-        
-        {/* Image Info - Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none">
-          <h4 className="text-white font-bold text-sm md:text-base">{image.title}</h4>
-          <p className="text-white/80 text-xs mt-1">{image.description}</p>
-        </div>
-
-        {/* Zoom Icon */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-90 group-hover:scale-100 pointer-events-none">
-          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/40">
-            <ZoomIn className="w-6 h-6 text-white" />
-          </div>
-        </div>
       </div>
-    </div>
+
+      {/* Info Space below or overlaying bottom seamlessly */}
+      <div className="p-3 text-left mt-1" style={{ transform: "translateZ(15px)" }}>
+        <h4 className="text-[#001830] font-extrabold text-sm md:text-base tracking-tight truncate group-hover:text-[#0068A8] transition-colors duration-200">
+          {image.title}
+        </h4>
+        <p className="text-gray-500 text-xs truncate mt-0.5">{image.description}</p>
+      </div>
+    </motion.div>
   );
 });
 
@@ -120,7 +131,6 @@ const GalleryPage = () => {
     setSelectedIndex((prev) => (prev !== null && prev < filteredImages.length - 1 ? prev + 1 : prev));
   }, [filteredImages.length]);
 
-  // Handle Mobile Touch Swiping (GPU Efficient Native Touch Listeners)
   const handleTouchStart = useCallback((e) => {
     touchStartX.current = e.changedTouches[0].clientX;
   }, []);
@@ -128,7 +138,7 @@ const GalleryPage = () => {
   const handleTouchEnd = useCallback((e) => {
     touchEndX.current = e.changedTouches[0].clientX;
     const diffX = touchStartX.current - touchEndX.current;
-    const threshold = 50; // Minimum swipe distance in pixels
+    const threshold = 50;
 
     if (Math.abs(diffX) > threshold) {
       if (diffX > 0) {
@@ -139,7 +149,6 @@ const GalleryPage = () => {
     }
   }, [handleNextImage, handlePrevImage]);
 
-  // Handle Hotkeys (Esc, Left, Right Arrows)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (selectedIndex === null) return;
@@ -151,58 +160,57 @@ const GalleryPage = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedIndex, handlePrevImage, handleNextImage]);
 
-  // Prevent background scroll setup
   useEffect(() => {
     document.body.style.overflow = selectedIndex !== null ? 'hidden' : 'unset';
     return () => { document.body.style.overflow = 'unset'; };
   }, [selectedIndex]);
 
   return (
-    <section id="gallery" className="py-16 md:py-28 bg-white relative overflow-hidden">
+    <section id="gallery" className="py-20 md:py-32 bg-gray-50 relative overflow-hidden min-h-screen">
       
-      {/* Background Decorative Elements */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none"></div>
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-[#001830]/5 to-transparent pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-gradient-to-tr from-[#E4E454]/5 to-transparent pointer-events-none"></div>
+      {/* Dynamic Structural Blurred 3D Backdrops */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#E4E454]/5 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
         
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <span className="text-[#0068A8] font-semibold text-sm uppercase tracking-wider block">
-            Memories
-          </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#001830] mt-2">
-            Photo Gallery
+        {/* Modern Section Header */}
+        <div className="text-center mb-16 space-y-3">
+          <div className="inline-flex items-center gap-1.5 bg-[#0068A8]/10 text-[#0068A8] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+            
+            <span>Photo Gallery</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[#001830] tracking-tight">
+            Campus Life Gallery
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto mt-4 text-base md:text-lg leading-relaxed">
-            Explore memorable moments captured at Khyber Model College & School
+          <p className="text-gray-500 max-w-2xl mx-auto pt-2 text-sm md:text-base leading-relaxed">
+            Take a beautiful look through unforgettable moments, achievements, and everyday student experiences at Khyber Model.
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="relative mb-10">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="relative mb-12 flex justify-center">
+          <div className="bg-white p-1.5 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-gray-100 flex items-center max-w-full overflow-hidden">
             <button
               onClick={scrollLeft}
-              className="hidden md:flex p-2 rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:bg-[#001830] hover:text-white group animate-none"
+              className="hidden md:flex p-2 rounded-xl text-gray-400 hover:text-[#001830] transition-colors"
             >
-              <ChevronLeft className="w-5 h-5 group-hover:text-white" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
             
             <div 
               ref={scrollContainerRef}
-              className="flex gap-3 overflow-x-auto px-1 py-2 scrollbar-hide scroll-smooth flex-1"
+              className="flex gap-1.5 overflow-x-auto px-1 py-0.5 scrollbar-hide scroll-smooth"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 whitespace-nowrap active:scale-95 transform ${
+                  className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap active:scale-95 ${
                     selectedCategory === category
-                      ? 'bg-[#001830] text-white shadow-lg shadow-[#001830]/20'
-                      : 'bg-white text-gray-600 border border-gray-200 hover:border-[#001830] hover:text-[#001830]'
+                      ? 'bg-[#001830] text-white shadow-md shadow-[#001830]/10'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-[#001830]'
                   }`}
                 >
                   {category}
@@ -212,110 +220,143 @@ const GalleryPage = () => {
 
             <button
               onClick={scrollRight}
-              className="hidden md:flex p-2 rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:bg-[#001830] hover:text-white group animate-none"
+              className="hidden md:flex p-2 rounded-xl text-gray-400 hover:text-[#001830] transition-colors"
             >
-              <ChevronRight className="w-5 h-5 group-hover:text-white" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Gallery Grid */}
-        {filteredImages.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {filteredImages.map((image, index) => (
-              <GalleryCard 
-                key={image.id}
-                image={image}
-                index={index}
-                onSelect={handleSelectImage}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <ImageIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600">No images found</h3>
-            <p className="text-gray-400 mt-2">Try selecting a different category</p>
-          </div>
-        )}
+        <AnimatePresence mode="popLayout">
+          {filteredImages.length > 0 ? (
+            <motion.div 
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            >
+              {filteredImages.map((image, index) => (
+                <GalleryCard 
+                  key={image.id}
+                  image={image}
+                  index={index}
+                  onSelect={handleSelectImage}
+                />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm"
+            >
+              <ImageIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-gray-700">No media found</h3>
+              <p className="text-gray-400 text-sm mt-1">Try switching to another category folder.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Lightbox Modal */}
+        {/* Lightbox 3D Spatial Presentation Modal */}
         <AnimatePresence>
           {activeImage && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-8 select-none"
-              style={{ 
-                paddingTop: 'calc(env(safe-area-inset-top, 0px) + 80px)',
-                paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)'
-              }}
+              className="fixed inset-0 z-[9999] bg-gray-950/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-8 select-none"
               onClick={() => setSelectedIndex(null)}
             >
               <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="relative max-w-5xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] md:max-h-[85vh]"
+                initial={{ scale: 0.9, opacity: 0, rotateY: -15 }}
+                animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+                exit={{ scale: 0.9, opacity: 0, rotateY: 15 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                style={{ transformStyle: "preserve-3d", perspective: 1200 }}
+                className="relative max-w-4xl w-full bg-white rounded-3xl overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] flex flex-col md:flex-row max-h-[92vh] border border-gray-100"
                 onClick={(e) => e.stopPropagation()}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
-                {/* Close Button */}
+                {/* Modern Floating Action Close */}
                 <button
                   onClick={() => setSelectedIndex(null)}
-                  className="absolute top-3 right-3 md:top-4 md:right-4 z-20 bg-black/60 hover:bg-black/80 backdrop-blur-sm text-white p-2 md:p-2.5 rounded-full transition-all duration-300 transform active:scale-95"
+                  className="absolute top-4 right-4 z-30 bg-white hover:bg-gray-100 text-gray-900 p-2.5 rounded-full shadow-lg transition-all duration-200 active:scale-95"
                 >
-                  <X className="w-4 h-4 md:w-5 md:h-5" />
+                  <X className="w-4 h-4" />
                 </button>
 
-                {/* Desktop Left Navigation Arrow */}
+                {/* Left Desktop Trigger */}
                 {selectedIndex > 0 && (
                   <button
                     onClick={handlePrevImage}
-                    className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 active:scale-90"
+                    className="hidden lg:flex absolute -left-16 top-1/2 -translate-y-1/2 z-20 bg-white/10 hover:bg-white/20 border border-white/20 text-white p-3 rounded-full transition-all duration-200"
                   >
-                    <ChevronLeft className="w-6 h-6" />
+                    <ChevronLeft className="w-5 h-5" />
                   </button>
                 )}
 
-                {/* Desktop Right Navigation Arrow */}
+                {/* Right Desktop Trigger */}
                 {selectedIndex < filteredImages.length - 1 && (
                   <button
                     onClick={handleNextImage}
-                    className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-200 active:scale-90"
+                    className="hidden lg:flex absolute -right-16 top-1/2 -translate-y-1/2 z-20 bg-white/10 hover:bg-white/20 border border-white/20 text-white p-3 rounded-full transition-all duration-200"
                   >
-                    <ChevronRight className="w-6 h-6" />
+                    <ChevronRight className="w-5 h-5" />
                   </button>
                 )}
 
-                {/* Image Container */}
-                <div className="relative bg-[#001830] flex items-center justify-center" style={{ minHeight: '300px', maxHeight: '70vh' }}>
+                {/* Responsive Left Asset Side */}
+                <div className="relative bg-gray-950 flex items-center justify-center flex-1 md:max-w-[60%] lg:max-w-[65%] min-h-[260px] sm:min-h-[380px] md:min-h-[500px]">
                   <img
-                    key={activeImage.id} // Forces clean re-render for fluid tracking changes
+                    key={activeImage.id}
                     src={activeImage.image}
                     alt={activeImage.title}
-                    decoding="async"
-                    loading="eager"
-                    className="w-full h-full max-h-[70vh] object-contain pointer-events-none"
+                    className="w-full h-full object-contain max-h-[50vh] md:max-h-[75vh]"
                   />
                 </div>
 
-                {/* Image Info */}
-                <div className="p-4 md:p-6 bg-white">
-                  <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
-                    <span className="text-xs font-bold text-[#0068A8] bg-[#0068A8]/10 px-2.5 py-0.5 md:px-3 md:py-1 rounded-full">
-                      {activeImage.category}
-                    </span>
-                    <span className="text-xs text-gray-400">•</span>
-                    <span className="text-xs text-gray-400">#{String(activeImage.id).padStart(2, '0')}</span>
+                {/* Info Description Block Sidebar */}
+                <div className="p-6 md:p-8 flex flex-col justify-between bg-white w-full md:max-w-[40%] lg:max-w-[35%] border-t md:border-t-0 md:border-l border-gray-100">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold tracking-widest text-[#0068A8] bg-[#0068A8]/10 px-2.5 py-1 rounded-md uppercase">
+                        {activeImage.category}
+                      </span>
+                      <span className="text-xs text-gray-300 font-medium">/</span>
+                      <span className="text-xs text-gray-400 font-semibold tracking-wider">
+                        ITEM {selectedIndex + 1} OF {filteredImages.length}
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-xl md:text-2xl font-extrabold text-[#001830] tracking-tight leading-tight">
+                      {activeImage.title}
+                    </h3>
+                    
+                    <p className="text-gray-500 text-sm md:text-base leading-relaxed">
+                      {activeImage.description}
+                    </p>
                   </div>
-                  <h3 className="text-lg md:text-2xl font-bold text-[#001830]">{activeImage.title}</h3>
-                  <p className="text-gray-500 text-sm md:text-base mt-1 md:mt-2">{activeImage.description}</p>
+
+                  {/* Inline Mobile-only Bottom Slide Controls */}
+                  <div className="flex lg:hidden items-center justify-between pt-6 border-t border-gray-100 mt-6">
+                    <button 
+                      onClick={handlePrevImage}
+                      disabled={selectedIndex === 0}
+                      className="flex items-center gap-1 text-xs font-bold text-gray-600 disabled:opacity-30"
+                    >
+                      <ChevronLeft className="w-4 h-4" /> Previous
+                    </button>
+                    <button 
+                      onClick={handleNextImage}
+                      disabled={selectedIndex === filteredImages.length - 1}
+                      className="flex items-center gap-1 text-xs font-bold text-gray-600 disabled:opacity-30"
+                    >
+                      Next <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
+
               </motion.div>
             </motion.div>
           )}
