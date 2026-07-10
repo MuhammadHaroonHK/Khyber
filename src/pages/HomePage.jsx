@@ -119,8 +119,8 @@ const HomePage = () => {
       >
         <div className="absolute inset-0 z-0">
           <img
-            src="/Background/background.jfif"
-            // https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=1800
+            src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=1800"
+            // /Background/background.jfif
             alt="School Campus Background"
             className="w-full h-full object-cover object-center"
           />
