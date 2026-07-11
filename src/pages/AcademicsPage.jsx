@@ -1,4 +1,4 @@
-// src/components/Academics.jsx
+// D:\khyber\src\pages\AcademicsPage.jsx
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { 
@@ -18,10 +18,10 @@ import {
 // ─── Data ──────────────────────────────────────────────────────────
 const academicsData = {
   levels: [
-    { name: 'Preschool', classes: 'Play Group – Prep', icon: School },
-    { name: 'Primary School', classes: 'Class I – V', icon: BookOpen },
-    { name: 'Middle School', classes: 'Class VI – VIII', icon: Users },
-    { name: 'Secondary School', classes: 'Class IX – X', icon: GraduationCap },
+    { name: 'Preschool', classes: 'Play Group – Prep', desc: 'Early learning foundation and childhood development.' },
+    { name: 'Primary School', classes: 'Class I – V', desc: 'Core academic literacy and base analytical skills.' },
+    { name: 'Middle School', classes: 'Class VI – VIII', desc: 'Critical reasoning and structural subject tracking.' },
+    { name: 'Secondary School', classes: 'Class IX – X', desc: 'Board exam preparation for higher metrics pathways.' },
   ],
   
   ageCriteria: [
@@ -41,73 +41,90 @@ const academicsData = {
   ],
 
   requirements: [
-    'Seats are offered subject to availability.',
-    'Applicants may be required to complete an admission assessment.',
-    'Parents or guardians may be invited for an interview.',
-    'Previous academic records may be requested for higher classes.',
+    { title: 'Seat Availability', text: 'All seat offers are subject to final registration timelines and vacancy limits.' },
+    { title: 'Admission Assessment', text: 'Applicants must clear age-appropriate assessment modules matching literacy benchmarks.' },
+    { title: 'Parent Interview', text: 'Parents/guardians are invited for a meeting to synchronize developmental milestones.' },
+    { title: 'Academic History', text: 'Verified past transfer records and transcript cards must be provided for advanced entry.' },
   ],
 
   testSubjects: [
-    { level: 'Prep – Class II', subjects: 'English, Mathematics' },
-    { level: 'Class III – V', subjects: 'English, Urdu, Mathematics' },
-    { level: 'Class VI – VIII', subjects: 'English, Urdu, Mathematics, Science' },
-    { level: 'Class IX – X', subjects: 'English, Mathematics, Science' },
+    { level: 'Prep – Class II', subjects: 'English, Mathematics', focus: 'Basic Diagnostic' },
+    { level: 'Class III – V', subjects: 'English, Urdu, Mathematics', focus: 'Foundational Skill Check' },
+    { level: 'Class VI – VIII', subjects: 'English, Urdu, Mathematics, Science', focus: 'Core Competency Evaluation' },
+    { level: 'Class IX – X', subjects: 'English, Mathematics, Science', focus: 'Secondary Board Mapping' },
   ],
 
   admissionSteps: [
-    { step: 'Complete the registration form.', icon: FileText },
-    { step: 'Submit the required documents.', icon: ClipboardCheck },
-    { step: 'Appear in the admission assessment.', icon: Calendar },
-    { step: 'Attend a parent/student interview.', icon: Users },
-    { step: 'Receive admission confirmation.', icon: UserCheck },
-    { step: 'Submit the admission fee.', icon: Award },
-    { step: 'Start your academic journey.', icon: Sparkles },
+    { step: 'Complete the registration form.', description: 'Fill out online portal or collect physical application.', icon: FileText },
+    { step: 'Submit the required documents.', description: 'Provide B-Form copies, photos, and past report cards.', icon: ClipboardCheck },
+    { step: 'Appear in the admission assessment.', description: 'Scheduled logic and foundational basic subjects test.', icon: Calendar },
+    { step: 'Attend a parent/student interview.', description: 'Interactive conversation with our evaluation panel.', icon: Users },
+    { step: 'Receive admission confirmation.', description: 'Formal notification issued within 3 working days.', icon: UserCheck },
+    { step: 'Submit the admission fee.', description: 'Secure your classroom seat allocation via designated bank branch.', icon: Award },
+    { step: 'Start your academic journey.', description: 'Orientation session and formal class schedule commencement.', icon: Sparkles },
   ]
 };
 
-// ─── Tabs Data ────────────────────────────────────────────────────
 const tabs = [
   { id: 'levels', label: 'Academic Levels' },
   { id: 'age-criteria', label: 'Age Eligibility' },
   { id: 'requirements', label: 'Requirements' },
   { id: 'assessment', label: 'Assessment' },
-  { id: 'process', label: 'Process' },
+  { id: 'process', label: 'Admission Process' },
 ];
 
 // ─── Sub-components ──────────────────────────────────────────────
 
-// Tab Button Component
 const TabButton = ({ tab, isActive, onClick }) => (
   <button
     onClick={() => onClick(tab.id)}
-    className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-300 rounded-lg ${
+    className={`px-5 py-3 text-sm font-semibold transition-all duration-300 rounded-xl relative ${
       isActive
-        ? 'bg-[#001830] text-white shadow-md shadow-[#001830]/20'
-        : 'text-gray-600 hover:text-[#001830] hover:bg-[#001830]/5'
+        ? 'text-white shadow-lg shadow-[#001830]/10'
+        : 'text-gray-500 hover:text-[#001830] hover:bg-gray-50'
     }`}
   >
+    {isActive && (
+      <motion.div
+        layoutId="activeTabIndicator"
+        className="absolute inset-0 bg-[#001830] rounded-xl -z-10"
+        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+      />
+    )}
     {tab.label}
   </button>
 );
 
-// Section Header Component
 const SectionHeader = ({ title, subtitle }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    className="text-center mb-12"
-  >
-    <span className="text-[#0068A8] font-semibold text-sm uppercase tracking-wider">
+  <div className="text-center mb-16">
+    <motion.span 
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      className="px-4 py-1.5 rounded-full bg-[#0068A8]/10 text-[#0068A8] font-bold text-xs uppercase tracking-widest inline-block"
+    >
       Admissions
-    </span>
-    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#001830] mt-2">
+    </motion.span>
+    <motion.h2 
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.1 }}
+      className="text-3xl md:text-5xl font-black text-[#001830] mt-4 tracking-tight"
+    >
       {title}
-    </h2>
-    <p className="text-gray-600 max-w-2xl mx-auto mt-4 text-base md:text-lg leading-relaxed">
+    </motion.h2>
+    <div className="w-16 h-1 bg-[#188454] mx-auto mt-4 rounded-full" />
+    <motion.p 
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.2 }}
+      className="text-gray-500 max-w-2xl mx-auto mt-4 text-base md:text-lg font-medium"
+    >
       {subtitle}
-    </p>
-  </motion.div>
+    </motion.p>
+  </div>
 );
 
 // ─── Main Component ──────────────────────────────────────────────
@@ -116,38 +133,29 @@ const AcademicsPage = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'levels':
-        return <LevelsTab />;
-      case 'age-criteria':
-        return <AgeCriteriaTab />;
-      case 'requirements':
-        return <RequirementsTab />;
-      case 'assessment':
-        return <AssessmentTab />;
-      case 'process':
-        return <ProcessTab />;
-      default:
-        return null;
+      case 'levels': return <LevelsTab />;
+      case 'age-criteria': return <AgeCriteriaTab />;
+      case 'requirements': return <RequirementsTab />;
+      case 'assessment': return <AssessmentTab />;
+      case 'process': return <ProcessTab />;
+      default: return null;
     }
   };
 
   return (
-    <section id="academics" className="py-16 md:py-28 bg-white relative overflow-hidden">
-      
-      {/* Background Decorative Elements - Very Subtle */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-bl from-[#001830]/3 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-gradient-to-tr from-[#E4E454]/3 to-transparent"></div>
+    <section id="academics" className="py-20 md:py-32 bg-[#FAFBFD] relative overflow-hidden min-h-screen">
+      {/* Background Blurs */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#0068A8]/5 rounded-full blur-3xl pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#188454]/5 rounded-full blur-3xl pointer-events-none transform -translate-x-1/3 translate-y-1/3" />
 
-      <div className="container mx-auto px-4 relative z-10">
-        
-        {/* Section Header */}
+      <div className="container mx-auto px-4 relative z-10 max-w-5xl">
         <SectionHeader 
-          title="Admissions"
-          subtitle="Join our academic community and embark on a journey of excellence"
+          title="Academic Framework"
+          subtitle="Explore entry criteria, procedural timelines, and structural education pathways designed for exceptional learners."
         />
 
-        {/* Tabs */}
-        <div className="flex flex-wrap gap-2 justify-center mb-10 overflow-x-auto pb-2 scrollbar-hide">
+        {/* Tab Switcher */}
+        <div className="bg-white p-2 rounded-2xl shadow-xs border border-gray-100 max-w-3xl mx-auto mb-12 flex flex-wrap gap-1 justify-center overflow-x-auto scrollbar-none">
           {tabs.map((tab) => (
             <TabButton
               key={tab.id}
@@ -158,50 +166,44 @@ const AcademicsPage = () => {
           ))}
         </div>
 
-        {/* Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            {renderContent()}
-          </motion.div>
-        </AnimatePresence>
-
+        {/* Content Render Stage */}
+        <div className="min-h-[400px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+            >
+              {renderContent()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
 };
 
-// ─── Tab Components ──────────────────────────────────────────────
+// ─── Refactored Modern Table Components ───────────────────────────
 
-// Academic Levels Tab
 const LevelsTab = () => (
-  <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
-    <h3 className="text-xl font-bold text-[#001830] mb-6">Academic Levels</h3>
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <div className="overflow-x-auto">
-      <table className="w-full">
+      <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-[#001830] text-white">
-            <th className="p-3 text-left rounded-tl-lg">Level</th>
-            <th className="p-3 text-left">Classes</th>
-            <th className="p-3 text-left rounded-tr-lg">Description</th>
+            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Academic Level</th>
+            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Assigned Classes</th>
+            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Curriculum Scope</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-100">
           {academicsData.levels.map((level, index) => (
-            <tr key={index} className="border-b border-gray-100 hover:bg-[#f8f9ff] transition-colors">
-              <td className="p-3 font-medium text-[#001830]">{level.name}</td>
-              <td className="p-3 text-gray-600">{level.classes}</td>
-              <td className="p-3 text-gray-500 text-sm">
-                {level.name === 'Preschool' && 'Early childhood education foundation'}
-                {level.name === 'Primary School' && 'Building core academic skills'}
-                {level.name === 'Middle School' && 'Developing critical thinking'}
-                {level.name === 'Secondary School' && 'Preparing for higher education'}
-              </td>
+            <tr key={index} className="hover:bg-gray-50/70 transition-colors">
+              <td className="p-4 font-bold text-[#001830] text-sm md:text-base">{level.name}</td>
+              <td className="p-4 text-sm font-medium text-[#0068A8] whitespace-nowrap">{level.classes}</td>
+              <td className="p-4 text-sm text-gray-500 leading-relaxed">{level.desc}</td>
             </tr>
           ))}
         </tbody>
@@ -210,23 +212,24 @@ const LevelsTab = () => (
   </div>
 );
 
-// Age Criteria Tab
 const AgeCriteriaTab = () => (
-  <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
-    <h3 className="text-xl font-bold text-[#001830] mb-6">Age Eligibility Criteria</h3>
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+      <h3 className="text-base font-bold text-[#001830]">Age Threshold Matrix</h3>
+    </div>
     <div className="overflow-x-auto">
-      <table className="w-full">
+      <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="bg-[#001830] text-white">
-            <th className="p-3 text-left rounded-tl-lg">Class</th>
-            <th className="p-3 text-left rounded-tr-lg">Minimum Age</th>
+          <tr className="bg-gray-100 text-[#001830] border-b border-gray-200">
+            <th className="p-4 text-xs font-bold uppercase tracking-wider">Class Target</th>
+            <th className="p-4 text-xs font-bold uppercase tracking-wider text-right">Minimum Age Cutoff</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-100">
           {academicsData.ageCriteria.map((item, index) => (
-            <tr key={index} className="border-b border-gray-100 hover:bg-[#f8f9ff] transition-colors">
-              <td className="p-3 font-medium text-[#001830]">{item.class}</td>
-              <td className="p-3 text-gray-600">{item.age}</td>
+            <tr key={index} className="hover:bg-[#0068A8]/5 transition-colors duration-150">
+              <td className="p-4 text-sm font-bold text-gray-700">{item.class}</td>
+              <td className="p-4 text-sm font-extrabold text-[#188454] text-right whitespace-nowrap">{item.age}</td>
             </tr>
           ))}
         </tbody>
@@ -235,46 +238,53 @@ const AgeCriteriaTab = () => (
   </div>
 );
 
-// Requirements Tab
 const RequirementsTab = () => (
-  <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
-    <h3 className="text-xl font-bold text-[#001830] mb-6">Admission Requirements</h3>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {academicsData.requirements.map((req, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: index * 0.1 }}
-          className="flex items-start gap-3 bg-[#f8f9ff] p-4 rounded-lg border border-gray-100 hover:shadow-md transition-all duration-300"
-        >
-          <div className="w-6 h-6 rounded-full bg-[#188454]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <ChevronRight className="w-4 h-4 text-[#188454]" />
-          </div>
-          <p className="text-gray-600 text-sm leading-relaxed">{req}</p>
-        </motion.div>
-      ))}
-    </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {academicsData.requirements.map((req, index) => (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: index * 0.05 }}
+        className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4 items-start"
+      >
+        <div className="w-8 h-8 rounded-lg bg-[#188454]/10 flex items-center justify-center text-[#188454] flex-shrink-0">
+          <ChevronRight className="w-5 h-5" />
+        </div>
+        <div>
+          <h4 className="font-bold text-sm text-[#001830] mb-1">{req.title}</h4>
+          <p className="text-gray-500 text-sm leading-relaxed">{req.text}</p>
+        </div>
+      </motion.div>
+    ))}
   </div>
 );
 
-// Assessment Tab
 const AssessmentTab = () => (
-  <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
-    <h3 className="text-xl font-bold text-[#001830] mb-6">Admission Assessment</h3>
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <div className="overflow-x-auto">
-      <table className="w-full">
+      <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-[#001830] text-white">
-            <th className="p-3 text-left rounded-tl-lg">Class Level</th>
-            <th className="p-3 text-left rounded-tr-lg">Assessment Subjects</th>
+            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Class Level</th>
+            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Evaluation Subjects</th>
+            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Assessment Objective</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-gray-100">
           {academicsData.testSubjects.map((item, index) => (
-            <tr key={index} className="border-b border-gray-100 hover:bg-[#f8f9ff] transition-colors">
-              <td className="p-3 font-medium text-[#001830]">{item.level}</td>
-              <td className="p-3 text-gray-600">{item.subjects}</td>
+            <tr key={index} className="hover:bg-gray-50/70 transition-colors">
+              <td className="p-4 font-bold text-[#001830] text-sm whitespace-nowrap">{item.level}</td>
+              <td className="p-4">
+                <div className="flex flex-wrap gap-1.5">
+                  {item.subjects.split(', ').map((subject, idx) => (
+                    <span key={idx} className="px-2 py-1 bg-gray-100 text-[#001830] rounded text-xs font-bold uppercase tracking-wider">
+                      {subject}
+                    </span>
+                  ))}
+                </div>
+              </td>
+              <td className="p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{item.focus}</td>
             </tr>
           ))}
         </tbody>
@@ -283,33 +293,36 @@ const AssessmentTab = () => (
   </div>
 );
 
-// Process Tab
 const ProcessTab = () => (
-  <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
-    <h3 className="text-xl font-bold text-[#001830] mb-6">Admission Process</h3>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {academicsData.admissionSteps.map((item, index) => (
+  <div className="relative border-l border-gray-200 ml-4 md:ml-6 space-y-8 py-2">
+    {academicsData.admissionSteps.map((item, index) => {
+      const Icon = item.icon;
+      return (
         <motion.div
           key={index}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.08 }}
-          className="flex items-center gap-4 bg-[#f8f9ff] p-4 rounded-lg border border-gray-100 hover:shadow-md transition-all duration-300 group"
+          initial={{ opacity: 0, x: -25 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.05 }}
+          className="relative pl-8 md:pl-10 group"
         >
-          <div className="w-10 h-10 rounded-full bg-[#001830]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#001830] transition-colors duration-300">
-            <span className="text-sm font-bold text-[#001830] group-hover:text-white transition-colors duration-300">
-              {index + 1}
-            </span>
+          {/* Timeline Dot Indicator */}
+          <div className="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-xs font-bold text-gray-400 group-hover:border-[#001830] group-hover:text-[#001830] transition-colors duration-300 shadow-xs z-10">
+            {index + 1}
           </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <item.icon className="w-4 h-4 text-[#188454] flex-shrink-0" />
-              <p className="text-gray-600 text-sm leading-relaxed">{item.step}</p>
+          
+          <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm group-hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#188454] group-hover:bg-[#001830] group-hover:text-white transition-all duration-300">
+              <Icon className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-[#001830]">{item.step}</h4>
+              <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
             </div>
           </div>
         </motion.div>
-      ))}
-    </div>
+      );
+    })}
   </div>
 );
 
