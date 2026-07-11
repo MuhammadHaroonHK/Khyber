@@ -78,20 +78,22 @@ const tabs = [
 const TabButton = ({ tab, isActive, onClick }) => (
   <button
     onClick={() => onClick(tab.id)}
-    className={`px-5 py-3 text-sm font-semibold transition-all duration-300 rounded-xl relative ${
+    className={`px-5 py-3 text-sm font-semibold transition-all duration-300 rounded-xl relative overflow-hidden isolate ${
       isActive
-        ? 'text-white shadow-lg shadow-[#001830]/10'
+        ? 'text-white'
         : 'text-gray-500 hover:text-[#001830] hover:bg-gray-50'
     }`}
   >
     {isActive && (
       <motion.div
         layoutId="activeTabIndicator"
-        className="absolute inset-0 bg-[#001830] rounded-xl -z-10"
+        className="absolute inset-0 bg-[#001830] rounded-xl z-0"
         transition={{ type: "spring", stiffness: 380, damping: 30 }}
       />
     )}
-    {tab.label}
+    <span className="relative z-10 pointer-events-none">
+      {tab.label}
+    </span>
   </button>
 );
 
