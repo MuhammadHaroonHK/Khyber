@@ -20,7 +20,7 @@ import {
 const ContactPage = () => {
 
   return (
-    <section id="contact" className="py-16 md:py-28 bg-gray-100 relative overflow-hidden">
+    <section id="contact" className="py-20 md:py-28 bg-gray-100 relative overflow-hidden">
 
       <div className="container mx-auto px-4 relative z-10">
         
