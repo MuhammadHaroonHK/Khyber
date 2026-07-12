@@ -112,7 +112,7 @@ const AboutPage = () => {
   return (
     <section
       id="about"
-      className="py-16 md:py-28 bg-white relative overflow-hidden"
+      className="py-20 md:py-28 bg-white relative overflow-hidden"
     >
       <div className="container mx-auto px-4 relative z-10">
         {/* ─── Section Header ────────────────────────────────────── */}
