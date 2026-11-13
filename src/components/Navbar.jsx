@@ -104,7 +104,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => {
               // Checks if this link matches our current URL route
               const isActive = location.pathname === link.path;
@@ -144,7 +144,7 @@ const Navbar = () => {
           </nav>
 
           {/* Mobile: Hamburger */}
-          <button onClick={toggleDrawer} className="md:hidden p-1 text-white">
+          <button onClick={toggleDrawer} className="lg:hidden p-1 text-white">
             {isDrawerOpen ? (
               <X className="w-6 h-6" />
             ) : (
@@ -160,7 +160,7 @@ const Navbar = () => {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="md:hidden overflow-hidden bg-[#001830] border-t border-white/10"
+              className="lg:hidden overflow-hidden bg-[#001830] border-t border-white/10"
             >
               <div className="container mx-auto px-4 py-4">
                 <ul className="flex flex-col gap-1">
