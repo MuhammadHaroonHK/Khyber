@@ -1,5 +1,5 @@
 // src/pages/HomePage.jsx
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import {
   ArrowRight,
   Award,
@@ -12,53 +12,9 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { HERO_IMAGE_URL } from "../App";
 
-const HERO_IMAGE_URL =
-  "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=75&w=1400";
-
-// ─── 1. INITIAL ANIMATED LOADER ───
-function InitialLoader({ isLoading }) {
-  return (
-    <AnimatePresence>
-      {isLoading && (
-        <motion.div
-          key="initial-loader"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.45, ease: "easeInOut" } }}
-          className="fixed inset-0 z-50 bg-gray-950 flex flex-col items-center justify-center px-4"
-        >
-          <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="flex flex-col items-center gap-5"
-          >
-            {/* Animated Crest / Icon */}
-            <div className="relative flex items-center justify-center w-20 h-20">
-              <motion.span
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 rounded-full border-4 border-white/10 border-t-[#E4E454] border-r-[#0068A8]"
-              />
-              <GraduationCap className="w-9 h-9 text-white" />
-            </div>
-
-            <div className="text-center space-y-1.5">
-              <h2 className="text-white font-bold tracking-wider text-lg uppercase">
-                Khyber Model College & School
-              </h2>
-              <p className="text-gray-400 text-xs tracking-widest uppercase">
-                Shaping Future Leaders...
-              </p>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-// ─── 2. VIEWPORT-GATED SECTION LOADER (Mounts only when user scrolls near) ───
+// ─── 1. VIEWPORT-GATED SECTION LOADER (Mounts only when user scrolls near) ───
 function LazySection({ children, minHeight = "300px" }) {
   const [shouldRender, setShouldRender] = useState(false);
   const sentinelRef = useRef(null);
@@ -74,7 +30,7 @@ function LazySection({ children, minHeight = "300px" }) {
           observer.disconnect();
         }
       },
-      { rootMargin: "200px 0px" } // Pre-mounts 200px before entering viewport
+      { rootMargin: "200px 0px" }
     );
 
     observer.observe(el);
@@ -88,7 +44,7 @@ function LazySection({ children, minHeight = "300px" }) {
   );
 }
 
-// ─── 3. SILKY-SMOOTH ZERO-RERENDER COUNTER ───
+// ─── 2. SILKY-SMOOTH ZERO-RERENDER COUNTER ───
 function SmoothCounter({ target, suffix = "", duration = 1800, start, className, style }) {
   const ref = useRef(null);
 
@@ -101,7 +57,6 @@ function SmoothCounter({ target, suffix = "", duration = 1800, start, className,
     const step = (now) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Cubic ease-out: fast start, silky deceleration
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(eased * target);
 
@@ -125,7 +80,7 @@ function SmoothCounter({ target, suffix = "", duration = 1800, start, className,
   );
 }
 
-// ─── 4. SPRING-SMOOTH 3D CARD (Fixed rect.height bug) ───
+// ─── 3. SPRING-SMOOTH 3D CARD ───
 function Interactive3DCard({ children, className }) {
   const cardRef = useRef(null);
   const rawX = useMotionValue(0);
@@ -206,41 +161,14 @@ const stats = [
   { number: 95, label: "Passing Rate", color: "#fbbf24", suffix: "%", duration: 2000 },
 ];
 
-const HomePage = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    const minDisplayTime = new Promise((res) => setTimeout(res, 650));
-    const maxTimeout = new Promise((res) => setTimeout(res, 2200));
-
-    // Preload hero image before dismissing loader so paint is instant
-    const preloadImage = new Promise((res) => {
-      const img = new Image();
-      img.src = HERO_IMAGE_URL;
-      img.onload = res;
-      img.onerror = res;
-    });
-
-    Promise.race([Promise.all([minDisplayTime, preloadImage]), maxTimeout]).then(() => {
-      if (isMounted) setIsLoading(false);
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+const HomePage = ({ isAppReady = true }) => {
   return (
     <div className="bg-white text-gray-900 overflow-x-hidden">
-      <InitialLoader isLoading={isLoading} />
-
       {/* ─── HERO SECTION (Loads Immediately) ─── */}
       <section
         id="home"
         className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950 text-white"
       >
-        {/* Lightweight Static Radial Glows */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
           <div
             className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-35"
@@ -256,7 +184,6 @@ const HomePage = () => {
           />
         </div>
 
-        {/* Hero Background Image */}
         <div className="absolute inset-0 z-0">
           <img
             src={HERO_IMAGE_URL}
@@ -270,12 +197,12 @@ const HomePage = () => {
         <div className="container mx-auto px-4 md:px-8 relative z-20 w-full pt-36 lg:pt-44 pb-16 flex flex-col items-center justify-center">
           <motion.div
             initial="hidden"
-            animate={isLoading ? "hidden" : "visible"}
+            animate={isAppReady ? "visible" : "hidden"}
             variants={{
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
-                transition: { staggerChildren: 0.1, delayChildren: 0.15 },
+                transition: { staggerChildren: 0.1, delayChildren: 0.1 },
               },
             }}
             className="space-y-8 max-w-4xl text-center flex flex-col items-center"
@@ -343,7 +270,7 @@ const HomePage = () => {
               </Link>
             </motion.div>
 
-            {/* Counters (No backdrop-blur GPU bottleneck) */}
+            {/* Counters */}
             <motion.div
               variants={{
                 hidden: { opacity: 0, y: 16 },
@@ -364,7 +291,7 @@ const HomePage = () => {
                     target={stat.number}
                     suffix={stat.suffix}
                     duration={stat.duration}
-                    start={!isLoading}
+                    start={isAppReady}
                     className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold tracking-tight tabular-nums"
                     style={{ color: stat.color }}
                   />
