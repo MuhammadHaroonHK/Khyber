@@ -30,7 +30,7 @@ function LazySection({ children, minHeight = "300px" }) {
           observer.disconnect();
         }
       },
-      { rootMargin: "200px 0px" }
+      { rootMargin: "200px 0px" },
     );
 
     observer.observe(el);
@@ -38,44 +38,76 @@ function LazySection({ children, minHeight = "300px" }) {
   }, []);
 
   return (
-    <div ref={sentinelRef} style={{ minHeight: shouldRender ? "auto" : minHeight }}>
+    <div
+      ref={sentinelRef}
+      style={{ minHeight: shouldRender ? "auto" : minHeight }}
+    >
       {shouldRender ? children : null}
     </div>
   );
 }
 
-// ─── 2. SILKY-SMOOTH ZERO-RERENDER COUNTER ───
-function SmoothCounter({ target, suffix = "", duration = 1800, start, className, style }) {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    if (!start || !ref.current) return;
-
-    let rafId;
-    const startTime = performance.now();
-
-    const step = (now) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.round(eased * target);
-
-      if (ref.current) {
-        ref.current.textContent = `${current}${suffix}`;
-      }
-
-      if (progress < 1) {
-        rafId = requestAnimationFrame(step);
-      }
-    };
-
-    rafId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(rafId);
-  }, [start, target, suffix, duration]);
+// ─── SILKY-SMOOTH GPU ODOMETER DIGIT COUNTER ───
+function DigitColumn({ digit, delay = 0, start }) {
+  const numericDigit = Number(digit);
+  // 2 full spins (20 numbers) + target digit for a rich mechanical roll
+  const numbers = Array.from(
+    { length: 20 + numericDigit + 1 },
+    (_, i) => i % 10,
+  );
 
   return (
-    <div ref={ref} className={className} style={style}>
-      0{suffix}
+    <span className="relative inline-block h-[1.1em] overflow-hidden align-bottom">
+      <motion.span
+        initial={{ y: "0%" }}
+        animate={
+          start
+            ? { y: `-${((numbers.length - 1) / numbers.length) * 100}%` }
+            : { y: "0%" }
+        }
+        transition={{
+          duration: 1.8,
+          delay,
+          ease: [0.16, 1, 0.3, 1], // Silky exponential deceleration
+        }}
+        className="flex flex-col leading-[1.1em] will-change-transform"
+      >
+        {numbers.map((num, idx) => (
+          <span key={idx} className="block h-[1.1em] select-none">
+            {num}
+          </span>
+        ))}
+      </motion.span>
+    </span>
+  );
+}
+
+function RollingCounter({ target, suffix = "", start, className, style }) {
+  // Format with commas (e.g., 3000 -> "3,000")
+  const formatted = target.toLocaleString("en-US");
+  const chars = formatted.split("");
+
+  return (
+    <div
+      className={`inline-flex items-baseline justify-center tabular-nums ${className}`}
+      style={style}
+      aria-label={`${formatted}${suffix}`}
+    >
+      {chars.map((char, index) =>
+        /\d/.test(char) ? (
+          <DigitColumn
+            key={`${index}-${char}`}
+            digit={char}
+            delay={index * 0.8}
+            start={start}
+          />
+        ) : (
+          <span key={`${index}-${char}`} className="inline-block">
+            {char}
+          </span>
+        ),
+      )}
+      {suffix && <span className="ml-0.5">{suffix}</span>}
     </div>
   );
 }
@@ -156,9 +188,27 @@ const features = [
 ];
 
 const stats = [
-  { number: 3000, label: "Students", color: "#38bdf8", suffix: "+", duration: 1800 },
-  { number: 250, label: "Faculty", color: "#f87171", suffix: "+", duration: 1600 },
-  { number: 95, label: "Passing Rate", color: "#fbbf24", suffix: "%", duration: 2000 },
+  {
+    number: 3000,
+    label: "Students",
+    color: "#38bdf8",
+    suffix: "+",
+    duration: 1800,
+  },
+  {
+    number: 250,
+    label: "Faculty",
+    color: "#f87171",
+    suffix: "+",
+    duration: 1600,
+  },
+  {
+    number: 95,
+    label: "Passing Rate",
+    color: "#fbbf24",
+    suffix: "%",
+    duration: 2000,
+  },
 ];
 
 const HomePage = ({ isAppReady = true }) => {
@@ -173,13 +223,15 @@ const HomePage = ({ isAppReady = true }) => {
           <div
             className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-35"
             style={{
-              background: "radial-gradient(circle, rgba(37,99,235,0.35) 0%, transparent 70%)",
+              background:
+                "radial-gradient(circle, rgba(37,99,235,0.35) 0%, transparent 70%)",
             }}
           />
           <div
             className="absolute -bottom-24 -right-24 w-[28rem] h-[28rem] rounded-full opacity-35"
             style={{
-              background: "radial-gradient(circle, rgba(5,150,105,0.35) 0%, transparent 70%)",
+              background:
+                "radial-gradient(circle, rgba(5,150,105,0.35) 0%, transparent 70%)",
             }}
           />
         </div>
@@ -236,9 +288,9 @@ const HomePage = ({ isAppReady = true }) => {
               }}
               className="text-gray-200 text-base sm:text-lg md:text-xl max-w-2xl leading-relaxed mx-auto drop-shadow-md"
             >
-              Khyber Model College & School is a trusted educational institution in
-              Akora Khattak, dedicated to shaping future leaders through quality
-              education, discipline, and character development.
+              Khyber Model College & School is a trusted educational institution
+              in Akora Khattak, dedicated to shaping future leaders through
+              quality education, discipline, and character development.
             </motion.p>
 
             <motion.div
@@ -287,12 +339,11 @@ const HomePage = ({ isAppReady = true }) => {
                   key={index}
                   className="bg-gray-900/85 rounded-2xl p-4 md:p-6 border border-white/15 shadow-2xl text-center flex flex-col items-center justify-center hover:-translate-y-1 hover:border-white/30 transition-all duration-200"
                 >
-                  <SmoothCounter
+                  <RollingCounter
                     target={stat.number}
                     suffix={stat.suffix}
-                    duration={stat.duration}
                     start={isAppReady}
-                    className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold tracking-tight tabular-nums"
+                    className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold tracking-tight"
                     style={{ color: stat.color }}
                   />
                   <div className="text-gray-300 text-xs sm:text-sm mt-2 font-medium tracking-wide">
@@ -327,7 +378,11 @@ const HomePage = ({ isAppReady = true }) => {
                   </h3>
                 </div>
                 <p className="text-gray-600 leading-relaxed text-base">
-                  Our mission is to provide a safe, supportive, and inspiring learning environment where students can grow academically, morally, and personally. We aim to help every student build knowledge, confidence, and strong values so they can become responsible and successful members of society.
+                  Our mission is to provide a safe, supportive, and inspiring
+                  learning environment where students can grow academically,
+                  morally, and personally. We aim to help every student build
+                  knowledge, confidence, and strong values so they can become
+                  responsible and successful members of society.
                 </p>
               </motion.div>
 
@@ -348,7 +403,11 @@ const HomePage = ({ isAppReady = true }) => {
                   </h3>
                 </div>
                 <p className="text-gray-600 leading-relaxed text-base">
-                  Our goal is to provide high-quality education through effective teaching, regular assessments, and continuous improvement. We are committed to helping every student achieve academic success while enhancing our facilities and creating a modern learning environment.
+                  Our goal is to provide high-quality education through
+                  effective teaching, regular assessments, and continuous
+                  improvement. We are committed to helping every student achieve
+                  academic success while enhancing our facilities and creating a
+                  modern learning environment.
                 </p>
               </motion.div>
             </div>
@@ -383,10 +442,16 @@ const HomePage = ({ isAppReady = true }) => {
                     "THE BEST GUIDELINE FOR YOUR KIDS"
                   </p>
                   <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos tempore vero illum consectetur deleniti, ea velit non sed assumenda repellendus laudantium voluptatum recusandae doloremque odio natus pariatur provident minus possimus?
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos
+                    tempore vero illum consectetur deleniti, ea velit non sed
+                    assumenda repellendus laudantium voluptatum recusandae
+                    doloremque odio natus pariatur provident minus possimus?
                   </p>
                   <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores cum veritatis dolorum, placeat, corrupti dolorem provident qui distinctio odit necessitatibus dicta molestiae magnam ea exercitationem cumque iure molestias nihil sequi?
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Asperiores cum veritatis dolorum, placeat, corrupti dolorem
+                    provident qui distinctio odit necessitatibus dicta molestiae
+                    magnam ea exercitationem cumque iure molestias nihil sequi?
                   </p>
                 </div>
 
@@ -497,7 +562,9 @@ const HomePage = ({ isAppReady = true }) => {
                 </h3>
 
                 <p className="text-gray-300 text-sm md:text-base leading-relaxed">
-                  Discover our academic programs, modern facilities, and supportive learning environment. Learn why families trust us to provide quality education.
+                  Discover our academic programs, modern facilities, and
+                  supportive learning environment. Learn why families trust us
+                  to provide quality education.
                 </p>
               </div>
 
