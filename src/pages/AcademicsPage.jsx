@@ -9,6 +9,7 @@ import {
   Award,
   Sparkles,
 } from "lucide-react";
+import { Reveal } from "../components/Reveal";
 
 const academicsData = {
   levels: [
@@ -67,8 +68,9 @@ const AcademicsPage = () => {
   const [activeTab, setActiveTab] = useState("levels");
 
   return (
-    <section id="academics" className="py-24 md:py-32 bg-[#FAFBFD] min-h-screen">
+    <section id="academics" className="py-24 md:py-32 bg-[#FAFBFD] min-h-screen overflow-x-hidden">
       <div className="container mx-auto px-4 max-w-5xl">
+        {/* Header (Immediate paint for fast LCP) */}
         <div className="text-center mb-12">
           <span className="px-4 py-1.5 rounded-full bg-[#0068A8]/10 text-[#0068A8] font-bold text-xs uppercase tracking-widest inline-block">
             Admissions
@@ -123,109 +125,119 @@ const AcademicsPage = () => {
 };
 
 const LevelsTab = () => (
-  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <div className="overflow-x-auto">
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="bg-[#001830] text-white">
-            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Academic Level</th>
-            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Assigned Classes</th>
-            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Curriculum Scope</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {academicsData.levels.map((level) => (
-            <tr key={level.name} className="hover:bg-gray-50/70 transition-colors">
-              <td className="p-4 font-bold text-[#001830] text-sm md:text-base">{level.name}</td>
-              <td className="p-4 text-sm font-medium text-[#0068A8] whitespace-nowrap">{level.classes}</td>
-              <td className="p-4 text-sm text-gray-600 leading-relaxed">{level.desc}</td>
+  <Reveal variant="zoom-in" duration={450}>
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-[#001830] text-white">
+              <th className="p-4 text-sm font-semibold tracking-wide uppercase">Academic Level</th>
+              <th className="p-4 text-sm font-semibold tracking-wide uppercase">Assigned Classes</th>
+              <th className="p-4 text-sm font-semibold tracking-wide uppercase">Curriculum Scope</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {academicsData.levels.map((level) => (
+              <tr key={level.name} className="hover:bg-gray-50/70 transition-colors">
+                <td className="p-4 font-bold text-[#001830] text-sm md:text-base">{level.name}</td>
+                <td className="p-4 text-sm font-medium text-[#0068A8] whitespace-nowrap">{level.classes}</td>
+                <td className="p-4 text-sm text-gray-600 leading-relaxed">{level.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  </Reveal>
 );
 
 const AgeCriteriaTab = () => (
-  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <div className="p-5 border-b border-gray-100 bg-gray-50/50">
-      <h2 className="text-base font-bold text-[#001830]">Age Threshold Matrix</h2>
-    </div>
-    <div className="overflow-x-auto">
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="bg-gray-100 text-[#001830] border-b border-gray-200">
-            <th className="p-4 text-xs font-bold uppercase tracking-wider">Class Target</th>
-            <th className="p-4 text-xs font-bold uppercase tracking-wider text-right">Minimum Age Cutoff</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {academicsData.ageCriteria.map((item) => (
-            <tr key={item.class} className="hover:bg-[#0068A8]/5 transition-colors">
-              <td className="p-4 text-sm font-bold text-gray-700">{item.class}</td>
-              <td className="p-4 text-sm font-extrabold text-[#188454] text-right whitespace-nowrap">{item.age}</td>
+  <Reveal variant="zoom-in" duration={450}>
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+        <h2 className="text-base font-bold text-[#001830]">Age Threshold Matrix</h2>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-gray-100 text-[#001830] border-b border-gray-200">
+              <th className="p-4 text-xs font-bold uppercase tracking-wider">Class Target</th>
+              <th className="p-4 text-xs font-bold uppercase tracking-wider text-right">Minimum Age Cutoff</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {academicsData.ageCriteria.map((item) => (
+              <tr key={item.class} className="hover:bg-[#0068A8]/5 transition-colors">
+                <td className="p-4 text-sm font-bold text-gray-700">{item.class}</td>
+                <td className="p-4 text-sm font-extrabold text-[#188454] text-right whitespace-nowrap">{item.age}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  </Reveal>
 );
 
 const RequirementsTab = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {academicsData.requirements.map((req) => (
-      <div
+    {academicsData.requirements.map((req, index) => (
+      <Reveal
         key={req.title}
-        className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4 items-start"
+        variant={index % 2 === 0 ? "slide-left" : "slide-right"}
+        delay={index * 75}
+        className="h-full"
       >
-        <div className="w-8 h-8 rounded-lg bg-[#188454]/10 flex items-center justify-center text-[#188454] flex-shrink-0">
-          <ChevronRight className="w-5 h-5" aria-hidden="true" />
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4 items-start h-full transition-shadow duration-200 hover:shadow-md">
+          <div className="w-8 h-8 rounded-lg bg-[#188454]/10 flex items-center justify-center text-[#188454] flex-shrink-0">
+            <ChevronRight className="w-5 h-5" aria-hidden="true" />
+          </div>
+          <div>
+            <h2 className="font-bold text-base text-[#001830] mb-1">{req.title}</h2>
+            <p className="text-gray-600 text-sm leading-relaxed">{req.text}</p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-bold text-base text-[#001830] mb-1">{req.title}</h2>
-          <p className="text-gray-600 text-sm leading-relaxed">{req.text}</p>
-        </div>
-      </div>
+      </Reveal>
     ))}
   </div>
 );
 
 const AssessmentTab = () => (
-  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <div className="overflow-x-auto">
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="bg-[#001830] text-white">
-            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Class Level</th>
-            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Evaluation Subjects</th>
-            <th className="p-4 text-sm font-semibold tracking-wide uppercase">Assessment Objective</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {academicsData.testSubjects.map((item) => (
-            <tr key={item.level} className="hover:bg-gray-50/70 transition-colors">
-              <td className="p-4 font-bold text-[#001830] text-sm whitespace-nowrap">{item.level}</td>
-              <td className="p-4">
-                <div className="flex flex-wrap gap-1.5">
-                  {item.subjects.split(", ").map((subject) => (
-                    <span
-                      key={subject}
-                      className="px-2 py-1 bg-gray-100 text-[#001830] rounded text-xs font-bold uppercase tracking-wider"
-                    >
-                      {subject}
-                    </span>
-                  ))}
-                </div>
-              </td>
-              <td className="p-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">{item.focus}</td>
+  <Reveal variant="zoom-in" duration={450}>
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-[#001830] text-white">
+              <th className="p-4 text-sm font-semibold tracking-wide uppercase">Class Level</th>
+              <th className="p-4 text-sm font-semibold tracking-wide uppercase">Evaluation Subjects</th>
+              <th className="p-4 text-sm font-semibold tracking-wide uppercase">Assessment Objective</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {academicsData.testSubjects.map((item) => (
+              <tr key={item.level} className="hover:bg-gray-50/70 transition-colors">
+                <td className="p-4 font-bold text-[#001830] text-sm whitespace-nowrap">{item.level}</td>
+                <td className="p-4">
+                  <div className="flex flex-wrap gap-1.5">
+                    {item.subjects.split(", ").map((subject) => (
+                      <span
+                        key={subject}
+                        className="px-2 py-1 bg-gray-100 text-[#001830] rounded text-xs font-bold uppercase tracking-wider"
+                      >
+                        {subject}
+                      </span>
+                    ))}
+                  </div>
+                </td>
+                <td className="p-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">{item.focus}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  </Reveal>
 );
 
 const ProcessTab = () => (
@@ -233,20 +245,27 @@ const ProcessTab = () => (
     {academicsData.admissionSteps.map((item, index) => {
       const Icon = item.icon;
       return (
-        <div key={item.step} className="relative pl-8 md:pl-10">
-          <div className="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-[#001830]">
-            {index + 1}
-          </div>
-          <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#188454] flex-shrink-0">
-              <Icon className="w-5 h-5" aria-hidden="true" />
+        <Reveal
+          key={item.step}
+          variant="fade-up"
+          delay={index * 65}
+          duration={450}
+        >
+          <div className="relative pl-8 md:pl-10">
+            <div className="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-white border-2 border-[#0068A8] flex items-center justify-center text-xs font-bold text-[#001830] shadow-xs">
+              {index + 1}
             </div>
-            <div>
-              <h2 className="font-bold text-sm md:text-base text-[#001830]">{item.step}</h2>
-              <p className="text-xs md:text-sm text-gray-600 mt-0.5">{item.description}</p>
+            <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4 transition-shadow duration-200 hover:shadow-md">
+              <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#188454] flex-shrink-0">
+                <Icon className="w-5 h-5" aria-hidden="true" />
+              </div>
+              <div>
+                <h2 className="font-bold text-sm md:text-base text-[#001830]">{item.step}</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-0.5">{item.description}</p>
+              </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       );
     })}
   </div>

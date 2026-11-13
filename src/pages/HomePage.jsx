@@ -11,8 +11,9 @@ import {
   Users,
 } from "lucide-react";
 import { HERO_IMAGE_URL } from "../App";
+import { Reveal } from "../components/Reveal";
 
-function SmoothCounter({ target, suffix = "", duration = 2000, className, style }) {
+function SmoothCounter({ target, suffix = "", duration = 3000, className, style }) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -22,7 +23,6 @@ function SmoothCounter({ target, suffix = "", duration = 2000, className, style 
     const step = (timestamp) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
-      // Ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.round(eased * target));
       if (progress < 1) {
@@ -82,7 +82,7 @@ const stats = [
 const HomePage = () => {
   return (
     <div className="bg-white text-gray-900 overflow-x-hidden">
-      {/* ─── HERO SECTION ─── */}
+      {/* ─── HERO SECTION (Above the fold: Instant paint, zero LCP delay) ─── */}
       <section
         id="home"
         className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950 text-white"
@@ -154,55 +154,63 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ─── MISSION & GOALS SECTION ─── */}
-      <section className="py-24 bg-white relative">
+      {/* ─── MISSION & GOALS SECTION (Opposite Horizontal Slides) ─── */}
+      <section className="py-24 bg-white relative overflow-hidden">
         <div className="container mx-auto px-4 md:px-8 max-w-6xl">
           <h2 className="sr-only">Our Mission and Strategic Goals</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            <div className="relative p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100/40 border border-gray-200/80 shadow-sm overflow-hidden">
-              <div className="flex items-center gap-4 mb-5">
-                <div className="p-3 bg-sky-50 rounded-2xl text-sky-600">
-                  <Eye className="w-6 h-6" aria-hidden="true" />
+            <Reveal variant="slide-left" delay={0} className="h-full">
+              <div className="relative h-full p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100/40 border border-gray-200/80 shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md">
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="p-3 bg-sky-50 rounded-2xl text-sky-600">
+                    <Eye className="w-6 h-6" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
+                    Our Mission
+                  </h3>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
-                  Our Mission
-                </h3>
+                <p className="text-gray-600 leading-relaxed text-base">
+                  Our mission is to provide a safe, supportive, and inspiring
+                  learning environment where students can grow academically,
+                  morally, and personally. We aim to help every student build
+                  knowledge, confidence, and strong values so they can become
+                  responsible and successful members of society.
+                </p>
               </div>
-              <p className="text-gray-600 leading-relaxed text-base">
-                Our mission is to provide a safe, supportive, and inspiring
-                learning environment where students can grow academically,
-                morally, and personally. We aim to help every student build
-                knowledge, confidence, and strong values so they can become
-                responsible and successful members of society.
-              </p>
-            </div>
+            </Reveal>
 
-            <div className="relative p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100/40 border border-gray-200/80 shadow-sm overflow-hidden">
-              <div className="flex items-center gap-4 mb-5">
-                <div className="p-3 bg-blue-50 rounded-2xl text-[#0068A8]">
-                  <Target className="w-6 h-6" aria-hidden="true" />
+            <Reveal variant="slide-right" delay={120} className="h-full">
+              <div className="relative h-full p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100/40 border border-gray-200/80 shadow-sm overflow-hidden transition-shadow duration-200 hover:shadow-md">
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="p-3 bg-blue-50 rounded-2xl text-[#0068A8]">
+                    <Target className="w-6 h-6" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
+                    Our Strategic Goals
+                  </h3>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
-                  Our Strategic Goals
-                </h3>
+                <p className="text-gray-600 leading-relaxed text-base">
+                  Our goal is to provide high-quality education through effective
+                  teaching, regular assessments, and continuous improvement. We
+                  are committed to helping every student achieve academic success
+                  while enhancing our facilities and creating a modern learning
+                  environment.
+                </p>
               </div>
-              <p className="text-gray-600 leading-relaxed text-base">
-                Our goal is to provide high-quality education through effective
-                teaching, regular assessments, and continuous improvement. We
-                are committed to helping every student achieve academic success
-                while enhancing our facilities and creating a modern learning
-                environment.
-              </p>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ─── PRINCIPAL'S MESSAGE SECTION ─── */}
-      <section className="py-24 bg-gradient-to-b from-gray-50 via-white to-gray-50">
+      {/* ─── PRINCIPAL'S MESSAGE SECTION (Slide Left + Portrait Zoom-In) ─── */}
+      <section className="py-24 bg-gradient-to-b from-gray-50 via-white to-gray-50 overflow-hidden">
         <div className="container mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
-            <div className="lg:col-span-7 order-2 lg:order-1 space-y-6 text-center lg:text-left">
+            <Reveal
+              variant="slide-left"
+              delay={0}
+              className="lg:col-span-7 order-2 lg:order-1 space-y-6 text-center lg:text-left"
+            >
               <div className="space-y-2">
                 <span className="text-[#0068A8] text-xs font-bold tracking-wider uppercase inline-block bg-blue-50 px-4 py-1.5 rounded-full">
                   Welcome to Khyber Model
@@ -248,9 +256,13 @@ const HomePage = () => {
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
-            </div>
+            </Reveal>
 
-            <div className="lg:col-span-5 order-1 lg:order-2 flex justify-center items-center">
+            <Reveal
+              variant="zoom-in"
+              delay={120}
+              className="lg:col-span-5 order-1 lg:order-2 flex justify-center items-center"
+            >
               <div className="relative w-full max-w-[240px] sm:max-w-[300px] lg:max-w-none">
                 <div className="hidden lg:block absolute inset-0 bg-[#0068A8] rounded-3xl transform translate-x-4 translate-y-4 z-0"></div>
                 <div className="relative z-10 overflow-hidden shadow-xl bg-gray-100 aspect-square lg:aspect-[4/5] rounded-full lg:rounded-3xl border-4 lg:border border-white lg:border-gray-100">
@@ -265,90 +277,96 @@ const HomePage = () => {
                   />
                 </div>
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* ─── FEATURES SECTION ─── */}
+      {/* ─── FEATURES SECTION (Fade Heading + Staggered Fade-Up Cards) ─── */}
       <section className="py-24 bg-gray-50 border-y border-gray-200/50">
         <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-          <div className="mb-16 text-center">
+          <Reveal variant="fade" className="mb-16 text-center">
             <span className="text-[#0068A8] text-xs font-bold tracking-wider uppercase inline-block bg-blue-50 px-4 py-1.5 rounded-full mb-3">
               Our Pride
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-[#001830] tracking-tight">
               Why Choose Our Institution?
             </h2>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature) => (
-              <div
+            {features.map((feature, index) => (
+              <Reveal
                 key={feature.title}
-                className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center flex flex-col h-full transition-transform duration-200 hover:-translate-y-1 hover:shadow-md"
+                variant="fade-up"
+                delay={index * 90}
+                className="h-full"
               >
-                <div className="flex flex-col items-center justify-between h-full">
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6"
-                    style={{ backgroundColor: `${feature.color}15` }}
-                  >
-                    <feature.icon
-                      className="w-8 h-8"
-                      style={{ color: feature.color }}
-                      aria-hidden="true"
-                    />
+                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center flex flex-col h-full transition-transform duration-200 hover:-translate-y-1 hover:shadow-md">
+                  <div className="flex flex-col items-center justify-between h-full">
+                    <div
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6"
+                      style={{ backgroundColor: `${feature.color}15` }}
+                    >
+                      <feature.icon
+                        className="w-8 h-8"
+                        style={{ color: feature.color }}
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#001830] mb-3 tracking-tight">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {feature.description}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold text-[#001830] mb-3 tracking-tight">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {feature.description}
-                  </p>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── CTA BANNER ─── */}
+      {/* ─── CTA BANNER (Zoom-In Card) ─── */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 md:px-8 max-w-5xl">
-          <div className="bg-gradient-to-br from-[#001830] to-[#003366] rounded-3xl p-8 md:p-14 text-white shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div className="space-y-4 text-center lg:text-left max-w-xl">
-              <div className="flex items-center justify-center lg:justify-start gap-2 text-yellow-400 text-xs font-bold tracking-wider uppercase">
-                <Calendar className="w-4 h-4" aria-hidden="true" />
-                <span>Admissions Open 2026</span>
+          <Reveal variant="zoom-in" duration={600}>
+            <div className="bg-gradient-to-br from-[#001830] to-[#003366] rounded-3xl p-8 md:p-14 text-white shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="space-y-4 text-center lg:text-left max-w-xl">
+                <div className="flex items-center justify-center lg:justify-start gap-2 text-yellow-400 text-xs font-bold tracking-wider uppercase">
+                  <Calendar className="w-4 h-4" aria-hidden="true" />
+                  <span>Admissions Open 2026</span>
+                </div>
+
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-balance">
+                  Give Your Child the Best Start for a Bright Future
+                </h2>
+
+                <p className="text-gray-200 text-sm md:text-base leading-relaxed">
+                  Discover our academic programs, modern facilities, and
+                  supportive learning environment. Learn why families trust us to
+                  provide quality education.
+                </p>
               </div>
 
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-balance">
-                Give Your Child the Best Start for a Bright Future
-              </h2>
+              <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto shrink-0 justify-center">
+                <Link
+                  to="/campus-tour"
+                  className="w-full sm:w-auto text-center bg-white text-gray-900 font-bold px-7 py-3.5 rounded-xl hover:bg-gray-100 transition-colors text-sm shadow-lg"
+                >
+                  Explore Campus
+                </Link>
 
-              <p className="text-gray-200 text-sm md:text-base leading-relaxed">
-                Discover our academic programs, modern facilities, and
-                supportive learning environment. Learn why families trust us to
-                provide quality education.
-              </p>
+                <Link
+                  to="/academics"
+                  className="w-full sm:w-auto text-center bg-white/10 border border-white/20 text-white font-bold px-7 py-3.5 rounded-xl hover:bg-white/20 transition-colors text-sm"
+                >
+                  View Programs
+                </Link>
+              </div>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto shrink-0 justify-center">
-              <Link
-                to="/campus-tour"
-                className="w-full sm:w-auto text-center bg-white text-gray-900 font-bold px-7 py-3.5 rounded-xl hover:bg-gray-100 transition-colors text-sm shadow-lg"
-              >
-                Explore Campus
-              </Link>
-
-              <Link
-                to="/academics"
-                className="w-full sm:w-auto text-center bg-white/10 border border-white/20 text-white font-bold px-7 py-3.5 rounded-xl hover:bg-white/20 transition-colors text-sm"
-              >
-                View Programs
-              </Link>
-            </div>
-          </div>
+          </Reveal>
         </div>
       </section>
     </div>
