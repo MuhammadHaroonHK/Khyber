@@ -1,5 +1,5 @@
 // src/pages/HomePage.jsx
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { animate, motion, useInView, useMotionValue, useTransform } from "framer-motion";
 import {
   ArrowRight,
   Award,
@@ -10,55 +10,36 @@ import {
   Target,
   Users,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-const useCountUp = (targetNumber, duration = 2000, startOnView = true) => {
-  const [count, setCount] = useState(0);
-  const countRef = useRef(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
+// Zero-rerender smooth counter component
+function SmoothCounter({ target, suffix = "", duration = 2, className, style }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
 
   useEffect(() => {
-    if (!startOnView) {
-      animateNumber();
-      return;
-    }
+    if (!isInView || !ref.current) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated) {
-            animateNumber();
-            setHasAnimated(true);
-          }
-        });
+    const controls = animate(0, target, {
+      duration,
+      ease: [0.16, 1, 0.3, 1], // Smooth ease-out curve
+      onUpdate(latest) {
+        if (ref.current) {
+          ref.current.textContent = `${Math.round(latest)}${suffix}`;
+        }
       },
-      { threshold: 0.3 }
-    );
+    });
 
-    if (countRef.current) observer.observe(countRef.current);
-    return () => observer.disconnect();
-  }, [targetNumber, duration, startOnView, hasAnimated]);
+    return () => controls.stop();
+  }, [isInView, target, suffix, duration]);
 
-  const animateNumber = () => {
-    const startTime = Date.now();
-    const updateCount = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * targetNumber));
-
-      if (progress < 1) {
-        requestAnimationFrame(updateCount);
-      } else {
-        setCount(targetNumber);
-      }
-    };
-    requestAnimationFrame(updateCount);
-  };
-
-  return { count, countRef };
-};
+  return (
+    <div ref={ref} className={className} style={style}>
+      0{suffix}
+    </div>
+  );
+}
 
 // 3D Card Wrapper Component
 function Interactive3DCard({ children, className }) {
@@ -66,16 +47,13 @@ function Interactive3DCard({ children, className }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Map mouse position to structural 3D Rotation angles
   const rotateX = useTransform(y, [-100, 100], [15, -15]);
   const rotateY = useTransform(x, [-100, 100], [-15, 15]);
 
   function handleMouseMove(event) {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = event.clientX - rect.left - width / 2;
+    const mouseX = event.clientX - rect.left - rect.width / 2;
     const mouseY = event.clientY - rect.top - height / 2;
     x.set(mouseX);
     y.set(mouseY);
@@ -92,8 +70,8 @@ function Interactive3DCard({ children, className }) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        rotateX: rotateX,
-        rotateY: rotateY,
+        rotateX,
+        rotateY,
         transformStyle: "preserve-3d",
         perspective: 1000,
       }}
@@ -137,18 +115,13 @@ const features = [
   },
 ];
 
+const stats = [
+  { number: 3000, label: "Students", color: "#38bdf8", suffix: "+", duration: 2.0 },
+  { number: 250, label: "Faculty", color: "#f87171", suffix: "+", duration: 1.8 },
+  { number: 95, label: "Passing Rate", color: "#fbbf24", suffix: "%", duration: 2.2 },
+];
+
 const HomePage = () => {
-  const stats = [
-    { number: 3000, label: "Students", color: "#38bdf8", suffix: "+" },
-    { number: 250, label: "Faculty", color: "#f87171", suffix: "+" },
-    { number: 95, label: "Passing Rate", color: "#fbbf24", suffix: "%" },
-  ];
-
-  const stat1 = useCountUp(stats[0].number, 2000);
-  const stat2 = useCountUp(stats[1].number, 1800);
-  const stat3 = useCountUp(stats[2].number, 2200);
-  const countResults = [stat1, stat2, stat3];
-
   return (
     <div className="bg-white text-gray-900 overflow-x-hidden">
       {/* ─── HERO SECTION ─── */}
@@ -156,34 +129,38 @@ const HomePage = () => {
         id="home"
         className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950 text-white"
       >
-        {/* Subtle Floating 3D Ambient Circles behind Hero */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-15 opacity-40">
-          <motion.div 
-            animate={{ y: [0, -30, 0], rotate: 360 }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-            className="absolute top-20 left-10 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl"
+        {/* Lightweight Ambient Radial Glows (replaces heavy blur-3xl spinning divs) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
+          <div
+            className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-35"
+            style={{
+              background: "radial-gradient(circle, rgba(37,99,235,0.35) 0%, transparent 70%)",
+            }}
           />
-          <motion.div 
-            animate={{ y: [0, 40, 0], rotate: -360 }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl"
+          <div
+            className="absolute -bottom-24 -right-24 w-[28rem] h-[28rem] rounded-full opacity-35"
+            style={{
+              background: "radial-gradient(circle, rgba(5,150,105,0.35) 0%, transparent 70%)",
+            }}
           />
         </div>
 
+        {/* Optimized Background Image */}
         <div className="absolute inset-0 z-0">
           <motion.img
-            initial={{ scale: 1.15, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.8, ease: "easeOut" }}
-            src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=1800"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.0, ease: "easeOut" }}
+            src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=75&w=1600"
             alt="School Campus Background"
-            className="w-full h-full object-cover object-center"
+            fetchPriority="high"
+            decoding="async"
+            className="w-full h-full object-cover object-center will-change-[opacity]"
           />
-          <div className="absolute inset-0 bg-gray-950/70"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-gray-950/90 via-gray-950/30 to-gray-950/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-950/90 via-gray-950/65 to-gray-950/95" />
         </div>
 
-        <div className="container mx-auto px-4 md:px-8 relative z-10 w-full pt-36 lg:pt-44 pb-16 flex flex-col items-center justify-center">
+        <div className="container mx-auto px-4 md:px-8 relative z-20 w-full pt-36 lg:pt-44 pb-16 flex flex-col items-center justify-center">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -191,17 +168,21 @@ const HomePage = () => {
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
-                transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+                transition: { staggerChildren: 0.12, delayChildren: 0.1 },
               },
             }}
             className="space-y-8 max-w-4xl text-center flex flex-col items-center"
           >
             <motion.h1
               variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 70 } },
+                hidden: { opacity: 0, y: 24 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                },
               }}
-              className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold leading-tight tracking-tight text-balance"
+              className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold leading-tight tracking-tight text-balance will-change-transform"
             >
               <span>THE BEST GUIDELINE</span>
               <br />
@@ -212,10 +193,14 @@ const HomePage = () => {
 
             <motion.p
               variants={{
-                hidden: { opacity: 0, y: 30 },
-                visible: { opacity: 1, y: 0 },
+                hidden: { opacity: 0, y: 20 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                },
               }}
-              className="text-gray-200 text-base sm:text-lg md:text-xl max-w-2xl leading-relaxed mx-auto drop-shadow-md"
+              className="text-gray-200 text-base sm:text-lg md:text-xl max-w-2xl leading-relaxed mx-auto drop-shadow-md will-change-transform"
             >
               Khyber Model College & School is a trusted educational institution in
               Akora Khattak, dedicated to shaping future leaders through quality
@@ -224,8 +209,12 @@ const HomePage = () => {
 
             <motion.div
               variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0 },
+                hidden: { opacity: 0, y: 16 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                },
               }}
               className="flex flex-wrap items-center justify-center gap-4 pt-2 w-full"
             >
@@ -235,9 +224,9 @@ const HomePage = () => {
                 rel="noreferrer"
               >
                 <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  className="bg-[#0068A8] text-white px-8 py-4 rounded-xl font-semibold flex items-center gap-2 shadow-xl hover:bg-[#E52E2E] transition-all duration-300 group"
+                  className="bg-[#0068A8] text-white px-8 py-4 rounded-xl font-semibold flex items-center gap-2 shadow-xl hover:bg-[#E52E2E] transition-colors duration-300 group"
                 >
                   Apply Now
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
@@ -246,22 +235,22 @@ const HomePage = () => {
 
               <Link to="/about">
                 <motion.button
-                  whileHover={{ scale: 1.05, bg: "rgba(255,255,255,1)", color: "#030712" }}
+                  whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-xl font-semibold transition-all duration-300"
+                  className="bg-white/10 backdrop-blur-sm hover:bg-white hover:text-gray-950 text-white border border-white/20 px-8 py-4 rounded-xl font-semibold transition-colors duration-300"
                 >
                   Learn More
                 </motion.button>
               </Link>
             </motion.div>
 
-            {/* Counters */}
+            {/* Smooth Zero-Rerender Counters */}
             <motion.div
               variants={{
                 hidden: { opacity: 0 },
                 visible: {
                   opacity: 1,
-                  transition: { staggerChildren: 0.1, delayChildren: 0.5 },
+                  transition: { staggerChildren: 0.1, delayChildren: 0.3 },
                 },
               }}
               className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 pt-8 md:pt-12 w-full max-w-3xl mx-auto"
@@ -269,21 +258,24 @@ const HomePage = () => {
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
-                  ref={countResults[index].countRef}
                   variants={{
-                    hidden: { opacity: 0, scale: 0.9, y: 20 },
-                    visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring" } },
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                    },
                   }}
                   whileHover={{ y: -4, borderColor: "rgba(255,255,255,0.3)" }}
-                  className="bg-gray-950/40 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-white/10 shadow-2xl text-center flex flex-col items-center justify-center transition-colors"
+                  className="bg-gray-950/60 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-white/10 shadow-2xl text-center flex flex-col items-center justify-center transition-colors will-change-transform"
                 >
-                  <div
-                    className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold tracking-tight"
+                  <SmoothCounter
+                    target={stat.number}
+                    suffix={stat.suffix}
+                    duration={stat.duration}
+                    className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold tracking-tight tabular-nums"
                     style={{ color: stat.color }}
-                  >
-                    {countResults[index].count}
-                    {stat.suffix}
-                  </div>
+                  />
                   <div className="text-gray-300 text-xs sm:text-sm mt-2 font-medium tracking-wide">
                     {stat.label}
                   </div>
