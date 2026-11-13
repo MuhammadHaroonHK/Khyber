@@ -1,15 +1,7 @@
-// src/components/Navbar.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
 import { Menu, X, MapPin, Phone, Mail } from "lucide-react";
 
-// Updated navLinks arrays to map to standard URL paths instead of section IDs
 const navLinks = [
   { id: "home", label: "Home", path: "/" },
   { id: "about", label: "About", path: "/about" },
@@ -25,168 +17,159 @@ const Navbar = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
-  const { scrollY } = useScroll();
-  const navPaddingY = useTransform(scrollY, [0, 100], ["16px", "8px"]);
-
   useEffect(() => {
-    const unsubscribe = scrollY.on("change", (latest) => {
-      setIsScrolled(latest > 20);
-    });
-    return () => unsubscribe();
-  }, [scrollY]);
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 24;
+      setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  // Automatically close the mobile menu whenever the page path changes
   useEffect(() => {
     setIsDrawerOpen(false);
-  }, [location]);
+  }, [location.pathname]);
 
-  const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+  const showSolidBg = !isHomePage || isScrolled || isDrawerOpen;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full">
-      {/* ── Top Info Bar ── */}
-      <div className="hidden md:block bg-[#001830]/95 backdrop-blur-sm py-1.5 border-b border-[#E4E454]/20">
+      {/* Top Info Bar */}
+      <div className="hidden md:block bg-[#001830] py-1.5 border-b border-[#E4E454]/20">
         <div className="container mx-auto px-4 flex items-center justify-between text-xs text-white">
           <div className="flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-[#E4E454]" />
+            <MapPin className="w-3 h-3 text-[#E4E454]" aria-hidden="true" />
             <span>G.T Road Iraq Stop Akora Khattak</span>
           </div>
-          <div className="hidden lg:inline-block items-center gap-1 italic text-[#E4E454] font-medium">
+          <div className="hidden lg:inline-block italic text-[#E4E454] font-medium">
             THE BEST GUIDELINE FOR YOUR KIDS
           </div>
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
-              <Phone className="w-3 h-3" />
+            <a href="tel:0923630075" className="flex items-center gap-1 hover:text-[#E4E454]">
+              <Phone className="w-3 h-3" aria-hidden="true" />
               0923-630075
-            </span>
-            <span className="flex items-center gap-1">
-              <Mail className="w-3 h-3" />
+            </a>
+            <a href="mailto:info@khyber.edu.pk" className="flex items-center gap-1 hover:text-[#E4E454]">
+              <Mail className="w-3 h-3" aria-hidden="true" />
               info@khyber.edu.pk
-            </span>
+            </a>
           </div>
         </div>
       </div>
 
-      {/* ── Main Navbar ── */}
-      <motion.div
-        style={{
-          paddingTop: navPaddingY,
-          paddingBottom: navPaddingY,
-          backgroundColor: isHomePage
-            ? `rgba(0, 24, 48, ${isScrolled ? 0.95 : 0})`
-            : "rgba(0, 24, 48, 0.95)",
-        }}
-        className={`
-  transition-all duration-300 text-white
-  ${
-    isHomePage
-      ? isScrolled
-        ? "shadow-lg backdrop-blur-md border-b border-white/10"
-        : "border-b border-transparent"
-      : "shadow-lg backdrop-blur-md border-b border-white/10"
-  }
-`}
+      {/* Main Navbar */}
+      <div
+        className={`transition-colors duration-200 text-white ${
+          isScrolled ? "py-2" : "py-3.5"
+        } ${
+          showSolidBg
+            ? "bg-[#001830]/95 shadow-lg border-b border-white/10"
+            : "bg-transparent border-b border-transparent"
+        }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <motion.img
+          <Link to="/" className="flex items-center gap-3">
+            <img
               src="/khyber_logo.jfif"
-              alt="SMS Logo"
-              className="max-h-9 rounded-full"
+              alt="Khyber Model College & School Logo"
+              width="36"
+              height="36"
+              className="w-9 h-9 rounded-full object-cover"
             />
-            <div className="text-center text-xs lg:text-sm">
-              <h1 className="text-[#E4E454] font-semibold">
-                Khyber Model{" "}
-                <div className="text-[#A8D8F0]">College & School</div>
-              </h1>
+            <div className="text-left text-xs lg:text-sm leading-tight">
+              <span className="block text-[#E4E454] font-semibold">
+                Khyber Model
+              </span>
+              <span className="block text-[#A8D8F0]">College & School</span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav aria-label="Primary Navigation" className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => {
-              // Checks if this link matches our current URL route
               const isActive = location.pathname === link.path;
-
               return (
                 <Link
                   key={link.id}
                   to={link.path}
-                  className={`
-                    relative font-medium text-[15px] tracking-wide transition-colors duration-200 cursor-pointer
-                    hover:text-[#E4E454]
-                    ${isActive ? "text-[#E4E454]" : "text-white"}
-                  `}
+                  className={`relative font-medium text-[15px] tracking-wide transition-colors duration-150 hover:text-[#E4E454] ${
+                    isActive ? "text-[#E4E454]" : "text-white"
+                  }`}
                 >
                   {link.label}
-                  <motion.span
-                    className="absolute -bottom-1 left-0 h-[2px] bg-[#188454] w-full origin-left"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.25 }}
+                  <span
+                    className={`absolute -bottom-1 left-0 h-[2px] bg-[#188454] w-full origin-left transition-transform duration-200 ${
+                      isActive ? "scale-x-100" : "scale-x-0"
+                    }`}
                   />
                 </Link>
               );
             })}
 
-            {/* CTA Button */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
-              <a
-                href="https://forms.gle/WzdSaumBGdREZofr5"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden lg:inline-block bg-[#0068A8] text-white border border-[#E4E454] rounded-md px-4 py-2 font-semibold text-sm shadow-md transition-all"
-              >
-                Apply Now
-              </a>
-            </motion.div>
+            <a
+              href="https://forms.gle/WzdSaumBGdREZofr5"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:inline-block bg-[#0068A8] hover:bg-[#00558a] text-white border border-[#E4E454] rounded-md px-4 py-2 font-semibold text-sm shadow-md transition-transform duration-150 active:scale-95"
+            >
+              Apply Now
+            </a>
           </nav>
 
-          {/* Mobile: Hamburger */}
-          <button onClick={toggleDrawer} className="lg:hidden p-1 text-white">
-            {isDrawerOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+          {/* Mobile Hamburger Button */}
+          <button
+            type="button"
+            onClick={() => setIsDrawerOpen((prev) => !prev)}
+            aria-label={isDrawerOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isDrawerOpen}
+            className="lg:hidden p-2 rounded-md text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#E4E454]"
+          >
+            {isDrawerOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
         {/* Mobile Drawer */}
-        <AnimatePresence>
-          {isDrawerOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="lg:hidden overflow-hidden bg-[#001830] border-t border-white/10"
-            >
-              <div className="container mx-auto px-4 py-4">
-                <ul className="flex flex-col gap-1">
-                  {navLinks.map((link) => {
-                    const isActive = location.pathname === link.path;
-
-                    return (
-                      <li key={link.id}>
-                        <Link
-                          to={link.path}
-                          className={`
-                            block py-3 px-2 text-white text-base font-medium rounded-md
-                            ${isActive ? "bg-[#0068A8]/20 text-[#E4E454]" : ""}
-                          `}
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+        {isDrawerOpen && (
+          <nav
+            aria-label="Mobile Navigation"
+            className="lg:hidden bg-[#001830] border-t border-white/10 mt-2"
+          >
+            <div className="container mx-auto px-4 py-4">
+              <ul className="flex flex-col gap-1">
+                {navLinks.map((link) => {
+                  const isActive = location.pathname === link.path;
+                  return (
+                    <li key={link.id}>
+                      <Link
+                        to={link.path}
+                        className={`block py-3 px-3 text-base font-medium rounded-md transition-colors ${
+                          isActive
+                            ? "bg-[#0068A8]/25 text-[#E4E454]"
+                            : "text-white hover:bg-white/5"
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+                <li className="pt-2">
+                  <a
+                    href="https://forms.gle/WzdSaumBGdREZofr5"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-center bg-[#0068A8] text-white border border-[#E4E454] rounded-md py-2.5 font-semibold text-sm"
+                  >
+                    Apply Now
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        )}
+      </div>
     </header>
   );
 };

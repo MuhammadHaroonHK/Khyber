@@ -1,0 +1,11 @@
+# Khyber Model College & School
+
+> Premier educational institution in Akora Khattak, Khyber Pakhtunkhwa, Pakistan, providing quality primary, middle, secondary, and intermediate education since 1997.
+
+## Core Pages
+- [Home](https://khyber-123.vercel.app/): Overview, institutional statistics, mission, strategic goals, and admissions portal.
+- [About Us](https://khyber-123.vercel.app/about): History since 1997, core values, campus video, and milestones.
+- [Academic Programs](https://khyber-123.vercel.app/academics): Preschool through Secondary levels, age eligibility matrix, admission requirements, assessment subjects, and step-by-step admission process.
+- [Campus Virtual Tour](https://khyber-123.vercel.app/campus-tour): Interactive 360-degree virtual tour of campus facilities.
+- [Photo Gallery](https://khyber-123.vercel.app/gallery): Categorized photos of campus events, academics, and facilities.
+- [Contact Us](https://khyber-123.vercel.app/contact): Location at G.T Road Iraq Stop Akora Khattak, phone (0923-630075), email (info@khyber.edu.pk), and office hours.

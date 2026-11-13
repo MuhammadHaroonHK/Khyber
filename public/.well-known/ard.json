@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "name": "Khyber Model College & School",
+  "description": "Official web portal for Khyber Model College & School in Akora Khattak, Pakistan.",
+  "url": "https://khyber-123.vercel.app",
+  "resources": [
+    {
+      "name": "llms_txt",
+      "type": "llms.txt",
+      "url": "https://khyber-123.vercel.app/llms.txt"
+    },
+    {
+      "name": "admissions_form",
+      "type": "external_form",
+      "url": "https://forms.gle/WzdSaumBGdREZofr5"
+    }
+  ]
+}

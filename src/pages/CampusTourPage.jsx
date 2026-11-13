@@ -1,4 +1,3 @@
-// src/pages/CampusTourPage.jsx
 import { useEffect, useRef, useState } from "react";
 
 const CampusTourPage = () => {
@@ -44,9 +43,9 @@ const CampusTourPage = () => {
   return (
     <section id="campus-tour" className="min-h-screen bg-gray-100 py-28">
       <div className="container mx-auto px-4">
-        <h2 className="mb-10 text-center text-4xl font-bold text-[#001830]">
+        <h1 className="mb-10 text-center text-3xl md:text-4xl font-bold text-[#001830]">
           Campus Virtual Tour
-        </h2>
+        </h1>
 
         <div className="relative overflow-hidden rounded-2xl bg-gray-900 shadow-2xl">
           {!isTourLoaded && (
